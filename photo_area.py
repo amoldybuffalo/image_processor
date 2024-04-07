@@ -6,6 +6,7 @@ gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw
 from utils import get_gtk_image
 
+
 class PhotoArea:
     def __init__(self, win, row_width):
         self.images = []
@@ -19,12 +20,19 @@ class PhotoArea:
         IMAGE_SIZE = 50
         image_count = len(self.images)
         print(image_count)
+        frame = Gtk.Frame()
         image = get_gtk_image(filename, 1000, 1000)
         image.set_size_request(200,200)
-        self.image_grid.attach(image, ((image_count-1) % ROW_SIZE) * IMAGE_SIZE, ((image_count-1) // ROW_SIZE) * IMAGE_SIZE, IMAGE_SIZE, IMAGE_SIZE)
+        frame.set_child(image)
+        frame.set_margin_start(5)
+        frame.set_margin_end(5)
+        frame.set_margin_top(5)
+        frame.set_margin_bottom(5)
+        self.image_grid.attach(frame, ((image_count-1) % ROW_SIZE) * IMAGE_SIZE, ((image_count-1) // ROW_SIZE) * IMAGE_SIZE, IMAGE_SIZE, IMAGE_SIZE)
 
     def display(self):
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        main_box.set_vexpand(True)
         title = Gtk.Label()
         title.set_markup("<b><span size=\"large\">Photos:</span></b>")
         main_box.append(title)
@@ -33,6 +41,7 @@ class PhotoArea:
         self.image_grid = Gtk.Grid()
         self.image_grid.set_row_spacing(5)
         self.image_window.set_child(self.image_grid)
+        self.image_window.set_vexpand(True)
         main_box.append(self.image_window)
         button = Gtk.Button(label="Import Photos...")
         button.connect("clicked", self.file_dialog)
@@ -60,6 +69,6 @@ class PhotoArea:
         dialog.connect("response", self.on_file_choice)
         dialog.show()
     
-    def get_images():
-        return List(Set(self.images))
+    def get_images(self):
+        return list(set(self.images))
         

@@ -5,14 +5,11 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw
 from photo_area import PhotoArea
-def sample(args):
-    pass
+from modules.scale import scale_action
+from action_box import ActionBox
 
-sample_options = [{"type":"input", "name":"width"}, {"type":"input", "name":"height"}]
+from action_predefs import action_predefs
 
-a = Action("Crop", sample_options, sample)
-
-actions = [a]
 
 class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, *args, **kwargs):
@@ -24,32 +21,50 @@ class MyApp(Adw.Application):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.images = []
-        self.actions = actions
+        self.action_box = ActionBox(list(action_predefs.values()))
         self.connect('activate', self.on_activate)
        
 
     def on_activate(self, app):
         self.build(app)
         self.win.present()
-        
+
+    def make_header(self):
+        header = Gtk.Box(orientation = Gtk.Orientation.VERTICAL)
+        apply_button = Gtk.Button.new_with_label("Process photos")
+        apply_button.connect("clicked", self.apply_actions)
+        header.append(apply_button)
+        return header
+
+    def resize(self, widget):
+        _, window_height = self.win.get_dimensions()
+        widget_width, _ = widget.get_dimensions()
+        widget.set_size_request(widget_width, window_height - 100)
+        print(widget.type)
+
     def build(self, app, templates=None):
         self.win = MainWindow(application=app)
         self.photo_area = PhotoArea(self.win, 3)
-        container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-        separator.set_margin_start(30)
-        separator.set_margin_end(30)
-        for a in self.actions:
-            container.append(a.display())
-        container.append(separator)
-        container.append(self.photo_area.display())     
-        self.win.set_child(container)
+        outer_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        outer_container.set_vexpand(True)
+        header = self.make_header()
+        split_view = Adw.OverlaySplitView()
+        split_view.set_max_sidebar_width(100)
+        split_view.set_hexpand(True)
+        sidebar = Adw.NavigationPage()
+        content = Adw.NavigationPage()
+        sidebar.set_child(self.action_box.display())
+        content.set_child(self.photo_area.display())
+        split_view.set_sidebar(sidebar)
+        split_view.set_content(content)
+        outer_container.append(header)
+        outer_container.append(split_view)
+        self.win.set_child(outer_container)
 
     def apply_actions(self, widget):
         images = self.photo_area.get_images()
         for image in images:
-            for action in self.actions:
-                image = action.run_on(image) #operates recursively
+            self.action_box.apply_actions(image)
 
     def on_window_resize(self, widget):
         (w, h) = self.win.get_size()

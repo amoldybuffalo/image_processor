@@ -4,8 +4,6 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw, GLib
 
-
-
 class Action:
     def __init__(self, name, parameters, callback):
         self.name = name
@@ -17,7 +15,7 @@ class Action:
     
     def on_entry_changed(self, entry):
         # Use GLib.idle_add to delay the action until the main loop is idle
-        GLib.idle_add(filter_entry_text, entry)
+        GLib.idle_add(self.filter_entry_text, entry)
 
     def filter_entry_text(entry):
         text = entry.get_text()
@@ -39,10 +37,11 @@ class Action:
     def display(self):
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, )
         main_box.set_size_request(200, 100)
-        main_box.set_spacing(10)
+        main_box.set_spacing(5)
         name = Gtk.Label()
         name.set_markup(self.name)
         main_box.set_margin_start(10)
+        main_box.set_margin_end(10)
         main_box.append(name)
 
         for option in self.parameters:
@@ -62,8 +61,8 @@ class Action:
         main_box.append(apply)
         return main_box
 
-        def run_on(filename):
-            return self.callback([filename, *self.parameters])
+    def run_on(self, filename):
+        return self.callback(filename, self.data)
 
 
 

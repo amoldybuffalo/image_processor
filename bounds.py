@@ -7,7 +7,7 @@ from wand.image import Image
 from wand.display import display
 from utils import add_file_suffix
 from utils import get_dimensions
-from scale import scale_image
+from modules.scale import scale_image
 
 
 # from matplotlib import pyplot as plt
@@ -69,5 +69,3 @@ def get_foreground_bounds(filename):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     return [(int(x_min/scale_factor),int(y_min/scale_factor)), (int(x_max/scale_factor), int(y_max/scale_factor))]
-
-get_foreground_bounds("image.jpg")
