@@ -13,13 +13,12 @@ class PhotoArea:
         self.row_width = row_width
         self.parent = parent
         self.action_box = action_box
+
     def add_to_images(self, filename):
         self.images.append(filename)
-        print(self.images)
         ROW_SIZE = self.row_width
         IMAGE_SIZE = 50
         image_count = len(self.images)
-        print(image_count)
         frame = Gtk.Frame()
         image = get_gtk_image(filename, 1000, 1000)
         image.set_size_request(200,200)
