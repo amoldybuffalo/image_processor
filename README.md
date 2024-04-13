@@ -1,4 +1,4 @@
-A simple application to automatically execute porcesses on images.
+A simple application to automatically execute processes on images.
 
 To install python dependency libraries: 
 `pip3 install pygtk wand numpy opencv-python`
