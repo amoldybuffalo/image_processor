@@ -3,28 +3,29 @@ from pathlib import Path
 from wand.image import Image
 from wand.display import display
 from pathlib import Path
+from utils import add_file_suffix
 import math
 
-def crop(filename, width_buffer, height_buffer):
+def crop(filename, path, horizontal_buffer, vertical_buffer):
     bounds = get_foreground_bounds(filename)
     x1 = bounds[0][0] 
     y1 = bounds[0][1]
     x2 = bounds[1][0]
     y2 = bounds[1][1]
     p = Path(filename)
-    cropped_filename = str(p.parent / Path(p.stem + "-cropped" + p.suffix))
+    cropped_filename = add_file_suffix(filename, path, "-cropped")
     with Image(filename=filename) as img:
         w = img.width 
         h = img.height
-        left = x1 - width_buffer if x1 - width_buffer > 0 else 0
-        right = x2 + width_buffer if x2 + width_buffer < w else w
-        top = y1 - height_buffer if y1 - height_buffer > 0 else 0
-        bottom = y2 + height_buffer if y2 + height_buffer < h else h
+        left = x1 - horizontal_buffer if x1 - horizontal_buffer > 0 else 0
+        right = x2 + horizontal_buffer if x2 + horizontal_buffer < w else w
+        top = y1 - vertical_buffer if y1 - vertical_buffer > 0 else 0
+        bottom = y2 + vertical_buffer if y2 + vertical_buffer < h else h
         img.crop(left, top, right, bottom)
         img.save(filename=cropped_filename)
     return cropped_filename
 
-def crop_square(filename, min_buffer):
+def crop_square(filename, save_path, min_buffer):
     bounds = get_foreground_bounds(filename)
     x1 = bounds[0][0] 
     y1 = bounds[0][1]
@@ -35,7 +36,7 @@ def crop_square(filename, min_buffer):
     max_length = max([bounded_width, bounded_height])
 
     p = Path(filename)
-    cropped_filename = str(p.parent / Path(p.stem + "-cropped" + p.suffix))
+    cropped_filename = add_file_suffix(filename, path, "-cropped")
     with Image(filename=filename) as img:
         w = img.width 
         h = img.height
@@ -64,12 +65,12 @@ def crop_square(filename, min_buffer):
         img.save(filename=cropped_filename)
     return cropped_filename
 
-def crop_action(filename, args):
-    width_buffer = int(args[0])
-    height_buffer = int(args[1])
-    return crop(filename, width_buffer, height_buffer)
+def crop_action(filename, path, args):
+    horizontal_buffer = int(args["horizontal_buffer"])
+    vertical_buffer_buffer = int(args["vertical_buffer"])
+    return crop(filename, path, horizontal_buffer, vertical_buffer)
 
-def crop_square_action(filename, args):
-    buffer = int(args[0])
-    return crop_square(filename, buffer)
+def crop_square_action(filename, path, args):
+    buffer = int(args["buffer"])
+    return crop_square(filename, path, buffer)
 

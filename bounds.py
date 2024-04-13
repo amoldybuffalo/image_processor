@@ -1,7 +1,7 @@
 # import required libraries
 import numpy as np
-from matplotlib import pyplot as plt
 import cv2
+from matplotlib import pyplot as plt
 import wand
 from wand.image import Image
 from wand.display import display
@@ -26,13 +26,12 @@ def get_foreground_bounds(filename):
     fgdModel = np.zeros((1,65),np.float64)
     print(f"H2 is {h2}")
     # define rectangle
-    rect = (80, h2 - 420, 400, h2 - 150)
-
+    rect = (80, int(h2/5), 400, int(h2 - (h2/3.5)))
+    print(rect)
     # apply grabCut method to extract the foreground
     cv2.grabCut(img,mask,rect,bgdModel,fgdModel,120,cv2.GC_INIT_WITH_RECT)
     mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
     img = img*mask2[:,:,np.newaxis]
-    print(f"Image dimensions after: {img.shape}" )
     # display the extracted foreground image
 
     h = img.shape[0]
@@ -43,6 +42,7 @@ def get_foreground_bounds(filename):
     x_min = -1
     y_max = -1
     x_max = -1
+    print("Got to here")
     line_started = False
     for y in range(0, h):
         for x in range(0, w):
@@ -58,14 +58,12 @@ def get_foreground_bounds(filename):
                 if line_started:
                     x_values.append(x)
                     line_started = False
+    print("Got here")
 
     x_min = min(x_values)
     x_max = max(x_values)
     img[y_min, x_min] = [255,0,0]
     img[y_max, x_max] = [255,0,0]  
 
-    #plt.imshow(img),plt.colorbar(),plt.show()
-    cv2.imshow('Foreground Image',img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    return [(int(x_min/scale_factor),int(y_min/scale_factor)), (int(x_max/scale_factor), int(y_max/scale_factor))]
+    plt.imshow(img),plt.show()
+    return [(int(x_min/scale_factor_x),int(y_min/scale_factor_y)), (int(x_max/scale_factor_x), int(y_max/scale_factor_y))]

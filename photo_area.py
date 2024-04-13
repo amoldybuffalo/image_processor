@@ -8,11 +8,11 @@ from utils import get_gtk_image
 
 
 class PhotoArea:
-    def __init__(self, win, row_width):
+    def __init__(self, parent, action_box, row_width):
         self.images = []
         self.row_width = row_width
-        self.win = win
-
+        self.parent = parent
+        self.action_box = action_box
     def add_to_images(self, filename):
         self.images.append(filename)
         print(self.images)
@@ -43,9 +43,16 @@ class PhotoArea:
         self.image_window.set_child(self.image_grid)
         self.image_window.set_vexpand(True)
         main_box.append(self.image_window)
+        footer = Gtk.Box(orientation = Gtk.Orientation.HORIZONTAL)
+        footer.set_hexpand(True)
+        footer.set_spacing(15)
+        apply_button = Gtk.Button.new_with_label("Process photos")
+        apply_button.connect("clicked", self.apply_to_images)
         button = Gtk.Button(label="Import Photos...")
         button.connect("clicked", self.file_dialog)
-        main_box.append(button)
+        footer.append(button)
+        footer.append(apply_button)
+        main_box.append(footer)
         return main_box
 
     def display_files(self, files):
@@ -62,7 +69,8 @@ class PhotoArea:
         dialog.destroy()
 
     def file_dialog(self, widget):
-        dialog = Gtk.FileChooserDialog(title='Foo', action=Gtk.FileChooserAction.OPEN)
+        dialog = Gtk.FileChooserDialog(title='Open Image', action=Gtk.FileChooserAction.OPEN)
+        dialog.set_transient_for(self.parent)
         dialog.add_buttons(
         ("_Cancel"), Gtk.ResponseType.CANCEL,
         ("_Open"), Gtk.ResponseType.ACCEPT)
@@ -71,4 +79,10 @@ class PhotoArea:
     
     def get_images(self):
         return list(set(self.images))
+
+    def apply_to_images(self, action_box):
+        images = self.get_images()
+        for image in images:
+            self.action_box.apply_actions(image)
+
         

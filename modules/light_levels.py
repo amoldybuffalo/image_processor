@@ -1,8 +1,8 @@
 from wand.image import Image
 from utils import add_file_suffix
 
-def auto_light_levels(filename):
-    new_filename = add_file_suffix(filename, "-level-adjusted")
+def light_levels(filename, path, gamma):
+    new_filename = add_file_suffix(filename, path, "-levels")
     with Image(filename=filename) as img:
         img.auto_gamma()
         img.auto_level()
@@ -10,4 +10,7 @@ def auto_light_levels(filename):
         img.save(filename=new_filename)
     return new_filename
 
-auto_light_levels("image.jpg")
+
+def light_level_action(filename, path, args):
+    gamma = args["gamma"]
+    return light_levels(filename, path, gamma)
