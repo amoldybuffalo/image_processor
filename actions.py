@@ -38,8 +38,6 @@ class Action:
                     data[id] = text
         return data
         
-
-
     def display(self):
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, )
         main_box.set_size_request(200, 100)

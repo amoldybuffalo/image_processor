@@ -8,7 +8,8 @@ from photo_area import PhotoArea
 from modules.scale import scale_action
 from action_box import ActionBox
 from error import ErrorHandler
-from action_predefs import action_predefs
+from settings_page import SettingsPage
+from predefs import action_predefs, settings_predefs
 
 
 class MainWindow(Gtk.ApplicationWindow):
@@ -50,8 +51,10 @@ class MyApp(Adw.Application):
         split_view.set_content(content)
         split_view.set_margin_top(5)
 
+        settings_page = SettingsPage(settings_predefs)
+
         stack.add_titled_with_icon(split_view, "Program", "Program", "applications-accessories")
-        stack.add_titled_with_icon(Gtk.Box(), "Settings", "Settings", "preferences-other")
+        stack.add_titled_with_icon(settings_page.display(), "Settings", "Settings", "preferences-other")
 
         switcher.set_stack(stack)
         switcher.set_policy(Adw.ViewSwitcherPolicy.WIDE)

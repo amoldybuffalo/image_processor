@@ -1,55 +1,45 @@
 import json
-import gi
-gi.require_version('Gtk', '4.0')
-gi.require_version('Adw', '1')
-from gi.repository import Gtk, Adw
+import platform
+from pathlib import Path
+import os
 
 def get_settings_path():
-     return "./settings.json"
+    operating_system = platform.system()
+    if operating_system == "Linux":
+        path = Path.home() / Path(".config/image_processor")
+        path.mkdir(parents=True, exist_ok=True)
+        path = path / "settings.json"
+        if not path.exists():
+            open(path, 'a').close()
+        return str(path)
+    elif operating_system == "Windows":
+        path = Path.home() / Path("AppData/Local/image_processor")
+        path.mkdir(parents=True, exist_ok=True)
+        path = path / "settings.json"
+        if not path.exists():
+            open(path, 'a').close()
+        return str(path)
+
 
 def read_setting(key):
     path = get_settings_path()
     with open(path, "r") as fp:
-        settings = json.load(fp)
-        return settings[key]
+        try:
+            settings = json.load(fp)
+            return settings[key]
+        except:
+            return None
 
 def write_setting(key, value):
     path = get_settings_path()
-    with open(path, "rw") as fp:
-        settings = json.load(fp)
+    with open(path, "r") as fp:
+        try:
+            settings = json.load(fp)
+        except:
+            settings = {}
+    with open(path, "w") as fp:
         settings[key] = value
-        json.dump(fp, path)
+        json.dump(settings, fp)
 
-class SettingWidget:
-    def __init__(self, name, setting, _type):
-        self.name = label
-        self.type = _type
-        self.setting = setting
-        self.widget = None
-
-    def choose_path(self):
-        dialog = Gtk.FileChooserDialog(title='Open Image', parent=self.parent, action=Gtk.FileChooserAction.SELECT_FOLDER)
-        dialog.add_buttons(
-        ("_Cancel"), Gtk.ResponseType.CANCEL,
-        ("_Open"), Gtk.ResponseType.ACCEPT)
-        dialog.connect("response", self.on_file_choice)
-        dialog.show()
-
-    def get_value():
-
-    def retrieve_setting(self):
-        seting = read_setting()
-
-    def apply(self):
-        write_setting(self.setting_name, self.value)
-
-    def display(self):
-        name = Gtk.label()
-        if self.type == "path":
-            self.widget = Gtk.Entry()
-        label.set_markup(self.name)
-        container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-
-        apply_button = Gtk.Button()
 
 
