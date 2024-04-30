@@ -30,5 +30,4 @@ def get_gtk_image(filename, w, h):
      image = Gtk.Image.new_from_pixbuf(pixbuf)
      return image
 
-def get_settings_path():
-     return "./settings.json"
+

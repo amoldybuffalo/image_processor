@@ -94,8 +94,8 @@ class ActionBox:
                 self.main_container.append(action["widget"])
 
     def apply_actions(self, image):
-        output_path = read_setting("settings.json", "save_path")
-        intermediate_path = read_setting("settings.json", "intermediate_path")
+        output_path = read_setting("save_path")
+        intermediate_path = read_setting("intermediate_path")
         actions = [self.actions[i] for i in [a["id"] for a in self.current_actions]]
         for action in actions:
                 if action.get_settings() == None:

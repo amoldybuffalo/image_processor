@@ -9,6 +9,7 @@ from modules.scale import scale_action
 from action_box import ActionBox
 from error import ErrorHandler
 from settings_page import SettingsPage
+from progress import ProgressWindow
 from predefs import action_predefs, settings_predefs
 
 
@@ -24,7 +25,6 @@ class MyApp(Adw.Application):
         self.connect('activate', self.on_activate)
 
     def on_activate(self, app):
-        self.images = []
         self.win = MainWindow(application=app)
         self.error_handler = ErrorHandler(self.win)
         self.action_box = ActionBox(list(action_predefs.values()), self.error_handler)
@@ -33,6 +33,11 @@ class MyApp(Adw.Application):
         self.win.present()
 
     def build(self, app, templates=None):
+
+        #test 
+        p_window = ProgressWindow(10, self.win)
+        p_window.display()
+        p_window.update("Did something", "finish")
 
         switcher = Adw.ViewSwitcher()
         switcher.set_vexpand(False)
